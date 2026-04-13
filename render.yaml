@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: gesture-decision-engine
+    runtime: docker
+    rootDir: gesture-decision-engine
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: MISTRAL_API_KEY
+        sync: false        # means Render will prompt you to enter the value manually (never stored in this file)
+    healthCheckPath: /health
