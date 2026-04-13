@@ -1,0 +1,13 @@
+{
+  "name": "gesture-decision-engine-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "esbuild src/main.ts --bundle --outfile=dist/bundle.js --platform=browser --minify && cp index.html dist/index.html",
+    "dev": "esbuild src/main.ts --bundle --outfile=dist/bundle.js --platform=browser --watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.21.5",
+    "typescript": "^5.9.3"
+  }
+}
