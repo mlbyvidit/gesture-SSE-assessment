@@ -6,6 +6,97 @@ An AI-powered sales qualification and recommendation tool built with FastAPI, Mi
 
 ---
 
+## Live Demo
+
+**The app is deployed and ready to use — no setup required:**
+
+### https://gesture-sse-assessment.onrender.com
+
+Just open the link and start chatting with Maya. No API key, no installation, nothing to configure.
+
+> **Note:** It's hosted on Render's free tier, so if nobody has used it for a while it may take **30–50 seconds** to wake up on the first request. After that it's fast. If Maya doesn't respond immediately, just wait a moment and try again.
+
+---
+
+## Using the app
+
+The interface has three modes, toggled from the top bar:
+
+| Mode | What you see |
+|---|---|
+| **Demo** | Split screen — chat on the left, live decision panel on the right |
+| **Customer View** | Chat only — what a real end-user would see (no internal data) |
+| **Sales Dashboard** | All active sessions — vertical, intent tier, full profile, CRM summary |
+
+**To see a full recommendation in 2–3 messages:** click one of the four preset buttons (Gifting, Loyalty, Brand, Enterprise) at the top of the chat. Each sends a realistic opening message and Maya will have enough context to recommend within a couple of turns.
+
+---
+
+## Running locally
+
+If you want to run the code yourself — for example to explore it, run the tests, or make changes — follow one of the two options below. You'll need your own Mistral API key (free at [console.mistral.ai](https://console.mistral.ai)).
+
+---
+
+### Option A — Python + Node (recommended for development)
+
+**Prerequisites:** Python 3.11+, Node 18+
+
+```bash
+# 1. Clone the repo
+git clone https://github.com/mlbyvidit/gesture-SSE-assessment.git
+cd gesture-SSE-assessment/gesture-decision-engine
+
+# 2. Add your API key
+cp .env.example .env
+# Open .env and set: MISTRAL_API_KEY=your_key_here
+
+# 3. Install Python dependencies
+pip install -r requirements.txt
+
+# 4. Build frontend and start server
+./start.sh
+```
+
+Open **http://localhost:8000**
+
+---
+
+### Option B — Docker (no Python or Node needed)
+
+**Prerequisites:** Docker Desktop
+
+```bash
+# 1. Clone the repo
+git clone https://github.com/mlbyvidit/gesture-SSE-assessment.git
+cd gesture-SSE-assessment/gesture-decision-engine
+
+# 2. Add your API key
+cp .env.example .env
+# Open .env and set: MISTRAL_API_KEY=your_key_here
+
+# 3. Build and run
+docker-compose up --build
+```
+
+Open **http://localhost:8000**
+
+To stop: `docker-compose down`
+
+---
+
+## Running the tests
+
+```bash
+# Unit tests — no server needed, no API key needed, runs in ~0.1s
+python -m pytest tests/test_intake.py tests/test_recommendation.py -v
+
+# End-to-end tests — start the server first, then run
+python -m pytest tests/test_e2e.py -v
+```
+
+---
+
 ## What's in this repo
 
 ```
@@ -23,105 +114,6 @@ gesture-decision-engine/
 
 ---
 
-## Quick start (local, recommended)
-
-### Prerequisites
-
-| Tool | Version |
-|---|---|
-| Python | 3.11+ |
-| Node | 18+ |
-| Mistral API key | Free at [console.mistral.ai](https://console.mistral.ai) |
-
-### 1. Enter the project directory
-
-```bash
-cd gesture-decision-engine
-```
-
-### 2. Create your `.env` file
-
-```bash
-cp .env.example .env
-```
-
-Open `.env` and set your key:
-
-```
-MISTRAL_API_KEY=your_key_here
-```
-
-### 3. Install Python dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Build the frontend and start the server
-
-```bash
-./start.sh
-```
-
-This does two things in sequence: builds the TypeScript frontend into `frontend/dist/`, then starts the FastAPI server on port 8000 with hot-reload.
-
-Open **http://localhost:8000** — Maya greets you automatically within half a second.
-
----
-
-## Quick start (Docker)
-
-If you'd rather not install Python or Node locally, Docker handles everything.
-
-```bash
-cp .env.example .env
-# Edit .env — add your MISTRAL_API_KEY
-
-docker-compose up --build
-```
-
-Open **http://localhost:8000**.
-
-To stop: `docker-compose down`
-
----
-
-## Using the app
-
-The interface has three modes, toggled from the top bar:
-
-| Mode | What you see |
-|---|---|
-| **Demo** | Split screen — chat on the left, live decision panel on the right |
-| **Customer View** | Chat only — what a real end-user would see (no internal data) |
-| **Sales Dashboard** | All active sessions — vertical, intent tier, full profile, CRM summary |
-
-**To trigger a full recommendation quickly:** use one of the four preset buttons (Gifting, Loyalty, Brand, Enterprise) at the top of the chat. Each sends a realistic opening message and runs through to a recommendation in 2–3 turns.
-
----
-
-## Running the tests
-
-### Unit tests — no server needed, runs in ~0.1s
-
-```bash
-python -m pytest tests/test_intake.py tests/test_recommendation.py -v
-```
-
-Tests 13 things: profile detection, JSON parsing, fallback handling, timeout recovery, prompt construction, decision extraction, and follow-up behaviour. All use mocked HTTP — no Mistral API key needed.
-
-### End-to-end tests — requires a running server
-
-Start the server first (`./start.sh`), then:
-
-```bash
-python -m pytest tests/test_e2e.py -v
-```
-
-Covers: full 4-turn loyalty conversation, session summary, rate limiting (429), missing session (404), session deletion. Auto-skipped if the server is not reachable — they will not fail CI.
-
----
-
 ## API at a glance
 
 | Method | Path | What it does |
@@ -131,16 +123,6 @@ Covers: full 4-turn loyalty conversation, session summary, rate limiting (429), 
 | `GET` | `/sessions` | All active sessions — used by the Sales Dashboard |
 | `DELETE` | `/session/{id}` | Remove a session from memory |
 | `GET` | `/health` | `{"status": "ok"}` |
-
-Minimal `POST /chat` example:
-
-```bash
-curl -X POST http://localhost:8000/chat \
-  -H 'Content-Type: application/json' \
-  -d '{"message": "we have 50000 loyalty members and redemption rates are low"}'
-```
-
-Response includes `session_id` — pass it back on every subsequent message to maintain the conversation.
 
 ---
 
