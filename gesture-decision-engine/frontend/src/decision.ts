@@ -98,6 +98,13 @@ export function updateDecision(decision: DecisionData): void {
     chip.textContent = q;
     chip.addEventListener("click", () => {
       if (nextQuestionCallback) nextQuestionCallback(q);
+      const original = chip.textContent;
+      chip.textContent = "Copied!";
+      chip.classList.add("question-chip--copied");
+      setTimeout(() => {
+        chip.textContent = original;
+        chip.classList.remove("question-chip--copied");
+      }, 1200);
     });
     chipsContainer.appendChild(chip);
   });

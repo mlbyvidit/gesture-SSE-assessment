@@ -402,8 +402,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupSummaryButton();
 
   onNextQuestionClick((question) => {
-    getInput().value = question;
-    handleSend(question);
+    navigator.clipboard.writeText(question).catch(() => {});
   });
 
   getInput().addEventListener("keydown", (e) => {
